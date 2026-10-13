@@ -1,4 +1,4 @@
-import { getUserIDs, getListenEvents } from "./data.mjs";
+import { getUserIDs, getListenEvents, getSong } from "./data.mjs";
 import { countListens, findMostListenedSong } from "./musicUtils.mjs";
 
 window.onload = function () {
@@ -25,6 +25,17 @@ window.onload = function () {
     const mostListenedSong = findMostListenedSong(songCounts);
     console.log(mostListenedSong);
 
-    results.textContent = `User ${selectedUserID} has ${listenEvents.length} listening events.`;
+    const song = getSong(mostListenedSong.songID);
+    console.log(song);
+
+    results.innerHTML = `
+      <h2>User ${selectedUserID}</h2>
+      <p>Total listening events: ${listenEvents.length}</p>
+      <h3>Most listened song</h3>
+      <p>Title: ${song.title}</p>
+      <p>Artist: ${song.artist}</p>
+      <p>Genre: ${song.genre}</p>
+      <p>Number of listens: ${mostListenedSong.count}</p>
+    `;
   });
 };
