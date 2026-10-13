@@ -6,6 +6,8 @@ import {
   findMostListenedSongOnFridayNight,
   countListeningTime,
   findMostListenedSongByTime,
+  countArtistListeningTime,
+  findMostListenedArtistByTime,
 } from "./musicUtils.mjs";
 
 window.onload = function () {
@@ -26,6 +28,17 @@ window.onload = function () {
     const selectedUserID = userSelect.value;
     const listenEvents = getListenEvents(selectedUserID);
 
+    if (listenEvents.length === 0) {
+      results.innerHTML = `
+        <h2>User ${selectedUserID}</h2>
+        <p>No listening data available for this user.</p>
+      `;
+      return;
+    }
+
+    console.log("Selected user:", selectedUserID);
+    console.log("Listening events:", listenEvents);
+
     const songCounts = countListens(listenEvents);
     console.log(songCounts);
 
@@ -40,12 +53,18 @@ window.onload = function () {
       getSong,
     );
     console.log(fridayNightSong);
-    const fridaySong = getSong(fridayNightSong.songID);
+    const fridaySong = fridayNightSong.songID
+      ? getSong(fridayNightSong.songID)
+      : null;
 
     const listeningTimes = countListeningTime(listenEvents, getSong);
     const mostListenedSongByTime = findMostListenedSongByTime(listeningTimes);
     console.log(mostListenedSongByTime);
     const longestListeningSong = getSong(mostListenedSongByTime.songID);
+
+    const artistTimes = countArtistListeningTime(listenEvents, getSong);
+    const mostListenedArtistByTime = findMostListenedArtistByTime(artistTimes);
+    console.log(mostListenedArtistByTime);
 
     const song = getSong(mostListenedSong.songID);
     console.log(song);
@@ -63,15 +82,25 @@ window.onload = function () {
       <p>Artist: ${mostListenedArtist.artist}</p>
       <p>Number of listens: ${mostListenedArtist.count}</p>
 
-      <h3>Most listened song on Friday night</h3>
-      <p>Title: ${fridaySong.title}</p>
-      <p>Artist: ${fridaySong.artist}</p>
-      <p>Number of listens: ${fridayNightSong.count}</p>
+      ${
+        fridaySong
+          ? `
+            <h3>Most listened song on Friday night</h3>
+            <p>Title: ${fridaySong.title}</p>
+            <p>Artist: ${fridaySong.artist}</p>
+            <p>Number of listens: ${fridayNightSong.count}</p>
+          `
+          : ""
+      }
 
       <h3>Song with the most listening time</h3>
       <p>Title: ${longestListeningSong.title}</p>
       <p>Artist: ${longestListeningSong.artist}</p>
       <p>Total listening time: ${mostListenedSongByTime.time} seconds</p>
+
+      <h3>Artist with the most listening time</h3>
+      <p>Artist: ${mostListenedArtistByTime.artist}</p>
+      <p>Total listening time: ${mostListenedArtistByTime.time} seconds</p>
     `;
   });
 };

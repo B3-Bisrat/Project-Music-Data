@@ -112,3 +112,37 @@ export function findMostListenedSongByTime(listeningTimes) {
     time: longestTime,
   };
 }
+
+export function countArtistListeningTime(listenEvents, getSong) {
+  const artistTimes = {};
+
+  for (const event of listenEvents) {
+    const song = getSong(event.song_id);
+    const artist = song.artist;
+
+    if (artistTimes[artist]) {
+      artistTimes[artist] += song.duration_seconds;
+    } else {
+      artistTimes[artist] = song.duration_seconds;
+    }
+  }
+
+  return artistTimes;
+}
+
+export function findMostListenedArtistByTime(artistTimes) {
+  let mostListenedArtist = null;
+  let longestTime = 0;
+
+  for (const artist in artistTimes) {
+    if (artistTimes[artist] > longestTime) {
+      longestTime = artistTimes[artist];
+      mostListenedArtist = artist;
+    }
+  }
+
+  return {
+    artist: mostListenedArtist,
+    time: longestTime,
+  };
+}
