@@ -8,6 +8,10 @@ import {
   findMostListenedSongByTime,
   countArtistListeningTime,
   findMostListenedArtistByTime,
+  findMostListenedSongByTimeOnFridayNight,
+  findLongestSongStreak,
+  findSongsListenedToEveryDay,
+  findTopGenres,
 } from "./musicUtils.mjs";
 
 window.onload = function () {
@@ -52,9 +56,20 @@ window.onload = function () {
       listenEvents,
       getSong,
     );
+
+    const fridayNightSongByTime = findMostListenedSongByTimeOnFridayNight(
+      listenEvents,
+      getSong,
+    );
+    console.log(fridayNightSongByTime);
+
     console.log(fridayNightSong);
     const fridaySong = fridayNightSong.songID
       ? getSong(fridayNightSong.songID)
+      : null;
+
+    const fridaySongByTime = fridayNightSongByTime.songID
+      ? getSong(fridayNightSongByTime.songID)
       : null;
 
     const listeningTimes = countListeningTime(listenEvents, getSong);
@@ -65,6 +80,16 @@ window.onload = function () {
     const artistTimes = countArtistListeningTime(listenEvents, getSong);
     const mostListenedArtistByTime = findMostListenedArtistByTime(artistTimes);
     console.log(mostListenedArtistByTime);
+
+    const longestStreak = findLongestSongStreak(listenEvents);
+    const streakSong = longestStreak.songID
+      ? getSong(longestStreak.songID)
+      : null;
+
+    const dailySongs = findSongsListenedToEveryDay(listenEvents);
+
+    const topGenres = findTopGenres(listenEvents, getSong);
+    console.log(topGenres);
 
     const song = getSong(mostListenedSong.songID);
     console.log(song);
@@ -93,6 +118,18 @@ window.onload = function () {
           : ""
       }
 
+      
+      ${
+        fridaySongByTime
+          ? `
+            <h3>Song with the most listening time on Friday night</h3>
+            <p>Title: ${fridaySongByTime.title}</p>
+            <p>Artist: ${fridaySongByTime.artist}</p>
+            <p>Total listening time: ${fridayNightSongByTime.time} seconds</p>
+          `
+          : ""
+      }
+
       <h3>Song with the most listening time</h3>
       <p>Title: ${longestListeningSong.title}</p>
       <p>Artist: ${longestListeningSong.artist}</p>
@@ -101,6 +138,49 @@ window.onload = function () {
       <h3>Artist with the most listening time</h3>
       <p>Artist: ${mostListenedArtistByTime.artist}</p>
       <p>Total listening time: ${mostListenedArtistByTime.time} seconds</p>
+
+      ${
+        streakSong
+          ? `
+            <h3>Longest consecutive song streak</h3>
+            <p>Title: ${streakSong.title}</p>
+            <p>Artist: ${streakSong.artist}</p>
+            <p>Consecutive listens: ${longestStreak.count}</p>
+          `
+          : ""
+      }
+
+      ${
+        dailySongs.length > 0
+          ? `
+            <h3>Songs listened to every day</h3>
+            <ul>
+              ${dailySongs
+                .map(function (songID) {
+                  const song = getSong(songID);
+                  return `<li>${song.title} — ${song.artist}</li>`;
+                })
+                .join("")}
+            </ul>
+          `
+          : ""
+      }
+      
+      ${
+        topGenres.length > 0
+          ? `
+            <h3>Top genres</h3>
+            <ol>
+              ${topGenres
+                .map(function (genreEntry) {
+                  return `<li>${genreEntry[0]} — ${genreEntry[1]} listens</li>`;
+                })
+                .join("")}
+            </ol>
+          `
+          : ""
+      }
+      
     `;
   });
 };

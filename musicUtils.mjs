@@ -146,3 +146,90 @@ export function findMostListenedArtistByTime(artistTimes) {
     time: longestTime,
   };
 }
+
+export function findMostListenedSongByTimeOnFridayNight(listenEvents, getSong) {
+  const fridayNightEvents = listenEvents.filter(function (event) {
+    return isFridayNight(event.timestamp);
+  });
+
+  const listeningTimes = countListeningTime(fridayNightEvents, getSong);
+
+  return findMostListenedSongByTime(listeningTimes);
+}
+
+export function findLongestSongStreak(listenEvents) {
+  let currentSongID = null;
+  let currentStreak = 0;
+  let longestSongID = null;
+  let longestStreak = 0;
+
+  for (const event of listenEvents) {
+    const songID = event.song_id;
+
+    if (songID === currentSongID) {
+      currentStreak++;
+    } else {
+      currentSongID = songID;
+      currentStreak = 1;
+    }
+
+    if (currentStreak > longestStreak) {
+      longestStreak = currentStreak;
+      longestSongID = currentSongID;
+    }
+  }
+
+  return {
+    songID: longestSongID,
+    count: longestStreak,
+  };
+}
+
+export function findSongsListenedToEveryDay(listenEvents) {
+  const songDays = {};
+  const listeningDays = new Set();
+
+  for (const event of listenEvents) {
+    const day = new Date(event.timestamp).toDateString();
+    const songID = event.song_id;
+
+    listeningDays.add(day);
+
+    if (!songDays[songID]) {
+      songDays[songID] = new Set();
+    }
+
+    songDays[songID].add(day);
+  }
+
+  const songsListenedToEveryDay = [];
+
+  for (const songID in songDays) {
+    if (songDays[songID].size === listeningDays.size) {
+      songsListenedToEveryDay.push(songID);
+    }
+  }
+
+  return songsListenedToEveryDay;
+}
+
+export function findTopGenres(listenEvents, getSong) {
+  const genreCounts = {};
+
+  for (const event of listenEvents) {
+    const song = getSong(event.song_id);
+    const genre = song.genre;
+
+    if (genreCounts[genre]) {
+      genreCounts[genre]++;
+    } else {
+      genreCounts[genre] = 1;
+    }
+  }
+
+  const sortedGenres = Object.entries(genreCounts).sort(function (a, b) {
+    return b[1] - a[1];
+  });
+
+  return sortedGenres.slice(0, 3);
+}
