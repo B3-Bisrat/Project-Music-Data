@@ -69,7 +69,7 @@ export function isFridayNight(timestamp) {
   return (day === 5 && hour >= 17) || (day === 6 && hour < 4);
 }
 
-export function findMostListenedSongOnFridayNight(listenEvents, getSong) {
+export function findMostListenedSongOnFridayNight(listenEvents) {
   const fridayNightEvents = listenEvents.filter(function (event) {
     return isFridayNight(event.timestamp);
   });

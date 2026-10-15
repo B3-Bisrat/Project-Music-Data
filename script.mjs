@@ -35,35 +35,24 @@ window.onload = function () {
     if (listenEvents.length === 0) {
       results.innerHTML = `
         <h2>User ${selectedUserID}</h2>
-        <p>No listening data available for this user.</p>
+        <p>This user didn't listen to any song.</p>
       `;
       return;
     }
 
-    console.log("Selected user:", selectedUserID);
-    console.log("Listening events:", listenEvents);
-
     const songCounts = countListens(listenEvents);
-    console.log(songCounts);
 
     const mostListenedSong = findMostListenedSong(songCounts);
-    console.log(mostListenedSong);
 
     const mostListenedArtist = findMostListenedArtist(listenEvents, getSong);
-    console.log(mostListenedArtist);
 
-    const fridayNightSong = findMostListenedSongOnFridayNight(
-      listenEvents,
-      getSong,
-    );
+    const fridayNightSong = findMostListenedSongOnFridayNight(listenEvents);
 
     const fridayNightSongByTime = findMostListenedSongByTimeOnFridayNight(
       listenEvents,
       getSong,
     );
-    console.log(fridayNightSongByTime);
 
-    console.log(fridayNightSong);
     const fridaySong = fridayNightSong.songID
       ? getSong(fridayNightSong.songID)
       : null;
@@ -74,12 +63,11 @@ window.onload = function () {
 
     const listeningTimes = countListeningTime(listenEvents, getSong);
     const mostListenedSongByTime = findMostListenedSongByTime(listeningTimes);
-    console.log(mostListenedSongByTime);
+
     const longestListeningSong = getSong(mostListenedSongByTime.songID);
 
     const artistTimes = countArtistListeningTime(listenEvents, getSong);
     const mostListenedArtistByTime = findMostListenedArtistByTime(artistTimes);
-    console.log(mostListenedArtistByTime);
 
     const longestStreak = findLongestSongStreak(listenEvents);
     const streakSong = longestStreak.songID
@@ -89,10 +77,8 @@ window.onload = function () {
     const dailySongs = findSongsListenedToEveryDay(listenEvents);
 
     const topGenres = findTopGenres(listenEvents, getSong);
-    console.log(topGenres);
 
     const song = getSong(mostListenedSong.songID);
-    console.log(song);
 
     results.innerHTML = `
       <h2>User ${selectedUserID}</h2>
@@ -118,7 +104,6 @@ window.onload = function () {
           : ""
       }
 
-      
       ${
         fridaySongByTime
           ? `
